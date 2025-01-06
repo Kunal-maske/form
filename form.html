@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+        /* background-color: #111;
+            color: white; */
+      }
+      form {
+        width: 400px;
+        margin: auto;
+        padding: 10px;
+        box-shadow: 0px 0px 10px 2px #ccc;
+      }
+      form h2 {
+        padding: 20px 0;
+      }
+      form label {
+        display: block;
+        font-size: 16px;
+      }
+      form input {
+        width: 100%;
+        height: 30px;
+        margin-bottom: 10px;
+      }
+      form button {
+        padding: 10px 25px;
+        background-color: aqua;
+        color: black;
+        border: none;
+        cursor: pointer;
+      }
+      .main {
+        width: 1320px;
+        margin: auto;
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .items {
+        margin: 1%;
+        flex-basis: 20%;
+        box-shadow: 0px 0px 10px 2px #ccc;
+        padding: 1%;
+        position: relative;
+      }
+      .items span {
+        position: absolute;
+        right: 5px;
+        top: 0;
+        font-size: 30px;
+        cursor: pointer;
+      }
+      .items h5 {
+        margin-top: 10px;
+      }
+      button{
+        display: table;
+        margin: auto;
+     
+      }
+    </style>
+  </head>
+  <body>
+    <form action="">
+      <h2>Enquiry Now</h2>
+
+      <label for="">Name</label>
+      <input type="text" name="uname" required />
+
+      <label for="">Email</label>
+      <input type="email" name="email" required />
+
+      <label for="">Phone</label>
+      <input type="number" name="phone" required />
+
+      <button>Save</button>
+    </form>
+
+    <button id="cAll">Clear All</button>
+
+    <div class="main"></div>
+  </body>
+  <script>
+    // let user=[
+    //     {
+    //         'name':'K',
+    //         'email':'k@m.c'
+    //     },
+    //     {
+    //         'name':'M',
+    //         'email':'m@m.c'
+    //     },
+    // ]
+
+    // localStorage.setItem('name',JSON.stringify(user))
+
+    // console.log(JSON.parse(localStorage.getItem('name')))
+
+    // localStorage.clear()
+    let form = document.querySelector("form");
+    let main = document.querySelector(".main");
+    let cAll = document.querySelector('#cAll')
+
+    form.addEventListener("submit", (event) => {
+      let name = event.target.uname.value;
+      let email = event.target.email.value;
+      let phone = event.target.phone.value;
+      // console.log(name,email,phone)
+      var checkStatus=0;
+
+      let userData = JSON.parse(localStorage.getItem("userDetails")) ?? [];
+      // console.log(userData)
+
+      for(let v of userData){
+        if(v.email==email||v.phone==phone){
+            checkStatus=1;
+            break;
+        }
+      }
+
+      if(checkStatus==1){
+        alert('Email or phone number already exist!')
+      }
+      else{
+        userData.push({
+        name: name,
+        email: email,
+        phone: phone,
+      });
+
+      localStorage.setItem("userDetails", JSON.stringify(userData));
+      event.target.reset();
+      }
+
+      
+      displayData();
+
+      event.preventDefault();
+    });
+
+    let displayData = () => {
+      let userData = JSON.parse(localStorage.getItem("userDetails")) ?? [];
+
+      let finalData = "";
+      userData.forEach((element, i) => {
+        console.log(element);
+        finalData += `
+            <div class="items">
+
+            <span onclick='removeData(${i})'>&times;</span>
+
+            <h5>Name</h5>
+            <div>${element.name}</div>
+
+            <h5>Email</h5>
+            <div>${element.email}</div>
+
+            <h5>Phone</h5>
+            <div>${element.phone}</div>
+
+        </div>
+            `;
+      });
+
+      // console.log(finalData)
+
+      main.innerHTML = finalData;
+    };
+
+
+    let removeData=(index)=>{
+        let userData = JSON.parse(localStorage.getItem("userDetails")) ?? [];
+        userData.splice(index,1)
+
+        localStorage.setItem("userDetails",JSON.stringify(userData))
+
+        displayData()
+    }
+
+    cAll.addEventListener('click',()=>{
+        localStorage.clear('userDetails')
+        displayData()
+    })
+
+    displayData();
+  </script>
+</html>
+
+<!-- add,recieve,delete data
+ send data=> localStorage,setItem("key","value")
+ recieve data => locaStorage.getItem(key)
+local storage me data sttring format me hona chahiye
+for storing multiple string data iin localstorage we use JSON-fromat of string(js object notation)
+therefore we use: JSON.stringify &
+JSON.parse
+
+array -> string by JSON for storing in local storage
+string-> array for getting the databack -->
